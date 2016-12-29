@@ -12,13 +12,9 @@ namespace Polyfill;
  */
 function unserialize($serialized, array $options = [])
 {
-    /**
-     * This is commented out to make sure when running tests with PHP 7
-     * the polyfill is used instead of the built in unserialize.
-     */
-    //if (PHP_VERSION_ID >= 70000) {
-    //    return \unserialize($serialized, $options);
-    //}
+    if (PHP_VERSION_ID >= 70000) {
+        return \unserialize($serialized, $options);
+    }
 
     if (!array_key_exists('allowed_classes', $options)) {
         $options['allowed_classes'] = true;
