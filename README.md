@@ -1,11 +1,6 @@
-Polyfill unserialize
-====================
+Polyfill unserialize [![Build Status](https://travis-ci.org/dbrumann/polyfill-unserialize.svg?branch=master)](https://travis-ci.org/dbrumann/polyfill-unserialize)
+===
 
-Build status: [![Build Status](https://travis-ci.org/dbrumann/polyfill-unserialize.svg?branch=master)](https://travis-ci.org/dbrumann/polyfill-unserialize)
+Backports unserialize options introduced in PHP 7.0 to older PHP versions. This was originally designed as a Proof of Concept for Symfony Issue [symfony/symfony#21090](https://github.com/symfony/symfony/pull/21090) to possibly add this to [Symfony's Polyfills](https://gtihub.com/symfony/polyfill) library.
 
-Backports unserialize options introduced in PHP 7.0 to older PHP versions.
-
-This is intended as a proof of concept to maybe introduce this to Symfony's polyfill library:
-
-- https://github.com/symfony/polyfill
-
+I don't really use this and therefore do not maintain this actively. Should you have questions or comments feel free to create an Issue.
