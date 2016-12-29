@@ -49,11 +49,10 @@ namespace Tests
         }
 
         /**
-         * @expectedException \PHPUnit_Framework_Error
+         * @expectedException \PHPUnit_Framework_Error_Notice
          * @expectedExceptionMessage The script tried to execute a method or access a property of an incomplete object
          */
-        public function testUnserializeWithAllowedClassesFalseReturnsIncompleteObjects(
-        )
+        public function testUnserializeWithAllowedClassesFalseReturnsIncompleteObjects()
         {
             $foo = new Foo();
             $serialized = serialize($foo);
@@ -67,15 +66,19 @@ namespace Tests
             $unserialized->bar;
         }
 
-        /**
-         * @expectedException \PHPUnit_Framework_Error_Warning
-         * @expectedExceptionMessage allowed_classes option should be array
-         */
         public function testUnserializeWithAllowedClassesNullIsSameAsFalse()
         {
+            /*
+             * @see https://bugs.php.net/bug.php?id=73836
+             */
+            $this->markTestSkipped('Behaves differently in PHP 7.0 and 7.1');
+
             $foo = new Foo();
             $serialized = serialize($foo);
 
+            // TODO Move back as annotation when removing skip above
+            $this->expectException(\PHPUnit_Framework_Error_Warning::class);
+            $this->expectExceptionMessage('allowed_classes option should be array');
             $unserialized = \Polyfill\unserialize(
                 $serialized,
                 ['allowed_classes' => null]
