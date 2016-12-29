@@ -23,11 +23,11 @@ function unserialize($serialized, array $options = [])
     if (true === $allowedClasses) {
         return \unserialize($serialized);
     }
-    if (false == $allowedClasses) {
+    if (false === $allowedClasses) {
         $allowedClasses = [];
     }
     if (!is_array($allowedClasses)) {
-        throw new \RuntimeException('Allowed classes must contain be an array.');
+        trigger_error('unserialize(): allowed_classes option should be array or boolean', E_USER_WARNING);
     }
     $sanitizedSerialized = preg_replace_callback(
         '/\bO:\d+:"([^"]*)":(\d+):{/',

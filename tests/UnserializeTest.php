@@ -50,7 +50,7 @@ namespace Tests
 
         /**
          * @expectedException \PHPUnit_Framework_Error
-         * @expectedExceptionMessage The script tried to execute a method or access a property of an incomplete object.
+         * @expectedExceptionMessage The script tried to execute a method or access a property of an incomplete object
          */
         public function testUnserializeWithAllowedClassesFalseReturnsIncompleteObjects(
         )
@@ -60,13 +60,17 @@ namespace Tests
 
             $unserialized = \Polyfill\unserialize(
                 $serialized,
-                ['allowed_classes' => null]
+                ['allowed_classes' => false]
             );
 
             $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
             $unserialized->bar;
         }
 
+        /**
+         * @expectedException \PHPUnit_Framework_Error_Warning
+         * @expectedExceptionMessage allowed_classes option should be array
+         */
         public function testUnserializeWithAllowedClassesNullIsSameAsFalse()
         {
             $foo = new Foo();
@@ -76,8 +80,6 @@ namespace Tests
                 $serialized,
                 ['allowed_classes' => null]
             );
-
-            $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
         }
 
         public function testUnserializeStringWithAllowedClassesFalse()
