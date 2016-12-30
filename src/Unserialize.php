@@ -34,16 +34,18 @@ final class Unserialize
             );
             $allowedClasses = array();
         }
+
         $sanitizedSerialized = preg_replace_callback(
             '/\bO:\d+:"([^"]*)":(\d+):{/',
-            function ($matches) use ($allowedClasses) {
-                if (in_array($matches[1], $allowedClasses)) {
-                    return $matches[0];
+            function ($match) use ($allowedClasses) {
+                list($completeMatch, $matchedClassName, $matchedObjectSize) = $match;
+                if (in_array($matchedClassName, $allowedClasses)) {
+                    return $completeMatch;
                 } else {
                     return sprintf(
                         'O:22:"__PHP_Incomplete_Class":%d:{s:27:"__PHP_Incomplete_Class_Name";%s',
-                        $matches[2] + 1, // size of object + 1 for added string
-                        \serialize($matches[1]) // original class name
+                        $matchedObjectSize + 1, // size of object + 1 for added string
+                        \serialize($matchedClassName)
                     );
                 }
             },
