@@ -17,7 +17,6 @@ final class Unserialize
         if (PHP_VERSION_ID >= 70000) {
             return \unserialize($serialized, $options);
         }
-
         if (!array_key_exists('allowed_classes', $options)) {
             $options['allowed_classes'] = true;
         }
@@ -43,9 +42,8 @@ final class Unserialize
                 } else {
                     return sprintf(
                         'O:22:"__PHP_Incomplete_Class":%d:{s:27:"__PHP_Incomplete_Class_Name";%s',
-                        $matches[2] + 1,
-                        // length of object + 1 for added string
-                        \serialize($matches[1])
+                        $matches[2] + 1, // size of object + 1 for added string
+                        \serialize($matches[1]) // original class name
                     );
                 }
             },
