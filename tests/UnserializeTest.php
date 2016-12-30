@@ -28,21 +28,6 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('\\Tests\\Brumann\\Polyfill\\Foo', $unserialized);
     }
 
-    public function test_unserialize_with_class_keyword_allowed_returns_instance()
-    {
-        if (PHP_VERSION_ID < 50500) {
-            $this->markTestSkipped('::class was introduced in PHP 5.5');
-        }
-        $foo = new Foo();
-        $serialized = serialize($foo);
-        $options = array(
-            'allowed_classes' => array(Foo::class),
-        );
-        $unserialized = Unserialize::unserialize($serialized, $options);
-
-        $this->assertInstanceOf(Foo::class, $unserialized);
-    }
-
     public function test_unserialize_with_fqcn_allowed_returns_instance()
     {
         $foo = new Foo();
