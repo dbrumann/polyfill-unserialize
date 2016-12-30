@@ -41,20 +41,22 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
     }
 
-    /**
-     * @expectedException \PHPUnit_Framework_Error_Warning
-     * @expectedExceptionMessage allowed_classes option should be array or boolean
-     */
     public function test_unserialize_with_allowed_classes_null_behaves_like_php71()
     {
-        if (PHP_VERSION_ID >= 70000 && PHP_VERSION_ID < 70100) {
-            $this->markTestSkipped('Strict type warning is not present in PHP 7.0');
-        }
+        // @see https://bugs.php.net/bug.php?id=73836
+        $this->markTestSkipped('Strict type warning is not present in PHP 7.0');
         $foo = new Foo();
         $serialized = serialize($foo);
         $options = array(
             'allowed_classes' => null,
         );
+
+        /*
+         * When re-enabling this test you should place this as an annotation,
+         * because otherwise older versions of PHPUnit will complain.
+         */
+        $this->expectException(\PHPUnit_Framework_Error_Warning::class);
+        $this->expectMessage('allowed_classes option should be array or boolean');
 
         Unserialize::unserialize($serialized, $options);
     }
