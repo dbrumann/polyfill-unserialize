@@ -13,7 +13,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
         $unserialized = Unserialize::unserialize($serialized);
 
-        $this->assertInstanceOf(Foo::class, $unserialized);
+        $this->assertInstanceOf('\Tests\Brumann\Polyfill\Foo', $unserialized);
     }
 
     public function test_unserialize_with_class_allowed_returns_instance()
@@ -21,11 +21,11 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $foo = new Foo();
         $serialized = serialize($foo);
         $options = array(
-            'allowed_classes' => array(Foo::class),
+            'allowed_classes' => array('\Tests\Brumann\Polyfill\Foo'),
         );
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertInstanceOf(Foo::class, $unserialized);
+        $this->assertInstanceOf('\Tests\Brumann\Polyfill\Foo', $unserialized);
     }
 
     public function test_unserialize_with_allowed_classes_false_returns_incomplete_object()
@@ -55,7 +55,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
          * When re-enabling this test you should place this as an annotation,
          * because otherwise older versions of PHPUnit will complain.
          */
-        $this->expectException(\PHPUnit_Framework_Error_Warning::class);
+        $this->expectException('\PHPUnit_Framework_Error_Warning');
         $this->expectMessage('allowed_classes option should be array or boolean');
 
         Unserialize::unserialize($serialized, $options);
@@ -71,7 +71,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $bar->foo = new Foo();
         $serialized = serialize($bar);
         $options = array(
-            'allowed_classes' => array(Foo::class),
+            'allowed_classes' => array('\Tests\Brumann\Polyfill\Foo'),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
@@ -86,11 +86,11 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $foo->bar = new \stdClass();
         $serialized = serialize($foo);
         $options = array(
-            'allowed_classes' => array(Foo::class),
+            'allowed_classes' => array('\Tests\Brumann\Polyfill\Foo'),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
-        $this->assertInstanceOf(Foo::class, $unserialized);
+        $this->assertInstanceOf('\Tests\Brumann\Polyfill\Foo', $unserialized);
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized->bar);
     }
 
@@ -100,13 +100,13 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $foo->foo = new Foo();
         $serialized = serialize($foo);
         $options = array(
-            'allowed_classes' => array(Foo::class),
+            'allowed_classes' => array('\Tests\Brumann\Polyfill\Foo'),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertInstanceOf(Foo::class, $unserialized);
-        $this->assertInstanceOf(Foo::class, $unserialized->foo);
+        $this->assertInstanceOf('\Tests\Brumann\Polyfill\Foo', $unserialized);
+        $this->assertInstanceOf('\Tests\Brumann\Polyfill\Foo', $unserialized->foo);
     }
 
     public function test_unserialize_with_allowed_false_serializes_string()
