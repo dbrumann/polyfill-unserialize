@@ -26,13 +26,14 @@ final class Unserialize
             return \unserialize($serialized);
         }
         if (false === $allowedClasses) {
-            $allowedClasses = [];
+            $allowedClasses = array();
         }
         if (!is_array($allowedClasses)) {
             trigger_error(
                 'unserialize(): allowed_classes option should be array or boolean',
                 E_USER_WARNING
             );
+            $allowedClasses = array();
         }
         $sanitizedSerialized = preg_replace_callback(
             '/\bO:\d+:"([^"]*)":(\d+):{/',
