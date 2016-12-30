@@ -20,9 +20,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
     {
         $foo = new Foo();
         $serialized = serialize($foo);
-        $options = [
-            'allowed_classes' => [Foo::class],
-        ];
+        $options = array(
+            'allowed_classes' => array(Foo::class),
+        );
         $unserialized = Unserialize::unserialize($serialized, $options);
 
         $this->assertInstanceOf(Foo::class, $unserialized);
@@ -32,9 +32,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
     {
         $foo = new Foo();
         $serialized = serialize($foo);
-        $options = [
+        $options = array(
             'allowed_classes' => false,
-        ];
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
@@ -52,9 +52,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         }
         $foo = new Foo();
         $serialized = serialize($foo);
-        $options = [
+        $options = array(
             'allowed_classes' => null,
-        ];
+        );
 
         Unserialize::unserialize($serialized, $options);
     }
@@ -68,9 +68,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $bar = new \stdClass();
         $bar->foo = new Foo();
         $serialized = serialize($bar);
-        $options = [
-            'allowed_classes' => [Foo::class],
-        ];
+        $options = array(
+            'allowed_classes' => array(Foo::class),
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
@@ -83,9 +83,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $foo = new Foo();
         $foo->bar = new \stdClass();
         $serialized = serialize($foo);
-        $options = [
-            'allowed_classes' => [Foo::class],
-        ];
+        $options = array(
+            'allowed_classes' => array(Foo::class),
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
         $this->assertInstanceOf(Foo::class, $unserialized);
@@ -97,9 +97,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $foo = new Foo();
         $foo->foo = new Foo();
         $serialized = serialize($foo);
-        $options = [
-            'allowed_classes' => [Foo::class],
-        ];
+        $options = array(
+            'allowed_classes' => array(Foo::class),
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
@@ -111,9 +111,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
     {
         $string = 'This is an ordinary string';
         $serialized = serialize($string);
-        $options = [
+        $options = array(
             'allowed_classes' => false,
-        ];
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
@@ -124,9 +124,9 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
     {
         $bool = true;
         $serialized = serialize($bool);
-        $options = [
+        $options = array(
             'allowed_classes' => false,
-        ];
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
@@ -135,17 +135,17 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
     public function test_unserialize_with_allowed_false_serializes_array()
     {
-        $array = [
+        $array = array(
             'key' => 42,
             1 => 'foo',
             'bar' => 'baz',
             2 => 23,
             4 => true,
-        ];
+        );
         $serialized = serialize($array);
-        $options = [
+        $options = array(
             'allowed_classes' => false,
-        ];
+        );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
