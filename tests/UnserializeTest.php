@@ -179,4 +179,18 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($first, $unserialized);
     }
+
+    public function test_double_unserialize_double_serialized()
+    {
+        $foo = new Foo();
+        $serialized = serialize(serialize($foo));
+        $options = array(
+            'allowed_classes' => false,
+        );
+
+        $first = Unserialize::unserialize($serialized, $options);
+        $unserialized = Unserialize::unserialize($first, $options);
+
+        $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
+    }
 }
