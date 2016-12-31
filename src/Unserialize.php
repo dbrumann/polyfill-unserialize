@@ -36,16 +36,17 @@ final class Unserialize
         }
 
         $sanitizedSerialized = preg_replace_callback(
-            '/\bO:\d+:"([^"]*)":(\d+):{/',
+            '/(^|;)O:\d+:"([^"]*)":(\d+):{/',
             function ($match) use ($allowedClasses) {
-                list($completeMatch, $matchedClassName, $matchedObjectSize) = $match;
-                if (in_array($matchedClassName, $allowedClasses)) {
+                list($completeMatch, $leftBorder, $className, $objectSize) = $match;
+                if (in_array($className, $allowedClasses)) {
                     return $completeMatch;
                 } else {
                     return sprintf(
-                        'O:22:"__PHP_Incomplete_Class":%d:{s:27:"__PHP_Incomplete_Class_Name";%s',
-                        $matchedObjectSize + 1, // size of object + 1 for added string
-                        \serialize($matchedClassName)
+                        '%sO:22:"__PHP_Incomplete_Class":%d:{s:27:"__PHP_Incomplete_Class_Name";%s',
+                        $leftBorder,
+                        $objectSize + 1, // size of object + 1 for added string
+                        \serialize($className)
                     );
                 }
             },

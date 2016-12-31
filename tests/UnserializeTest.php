@@ -165,4 +165,18 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($array, $unserialized);
     }
+
+    public function test_double_serialized_unserializes_as_first_serialized()
+    {
+        $foo = new Foo();
+        $first = serialize($foo);
+        $second = serialize($first);
+        $options = array(
+            'allowed_classes' => false,
+        );
+
+        $unserialized = Unserialize::unserialize($second, $options);
+
+        $this->assertSame($first, $unserialized);
+    }
 }
