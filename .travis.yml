@@ -10,9 +10,9 @@ php:
   - '7.0'
   - '7.1'
 
-
 before_install:
-  - composer self-update;
+  - phpenv config-rm xdebug.ini
+  - composer self-update
 
 install:
   - composer install
