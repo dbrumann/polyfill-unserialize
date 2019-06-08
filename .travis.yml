@@ -20,7 +20,10 @@ matrix:
       dist: xenial
     - php: '7.3'
       dist: xenial
+    - php: nightly
 
+before_script:
+  - curl -sSfL -o ~/.phpenv/versions/$(phpenv version-name)/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar
 
 before_install:
   - phpenv config-rm xdebug.ini
