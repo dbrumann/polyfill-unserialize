@@ -6,24 +6,31 @@ matrix:
   include:
     - php: '5.3'
       dist: precise
+      env: PHPUNIT_VERSION=4.8
     - php: '5.4'
       dist: trusty
+      env: PHPUNIT_VERSION=4.8
     - php: '5.5'
       dist: trusty
+      env: PHPUNIT_VERSION=4.8
     - php: '5.6'
       dist: trusty
+      env: PHPUNIT_VERSION=5.7
     - php: '7.0'
       dist: trusty
+      env: PHPUNIT_VERSION=5.7
     - php: '7.1'
       dist: xenial
+      env: PHPUNIT_VERSION=5.7
     - php: '7.2'
       dist: xenial
+      env: PHPUNIT_VERSION=5.7
     - php: '7.3'
       dist: xenial
-    - php: nightly
+      env: PHPUNIT_VERSION=5.7
 
 before_script:
-  - curl -sSfL -o ~/.phpenv/versions/$(phpenv version-name)/bin/phpunit https://phar.phpunit.de/phpunit-5.7.phar
+  - curl -sSfL -o ~/.phpenv/versions/$(phpenv version-name)/bin/phpunit https://phar.phpunit.de/phpunit-${PHPUNIT_VERSION}.phar
 
 before_install:
   - phpenv config-rm xdebug.ini
