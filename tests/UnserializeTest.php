@@ -6,48 +6,64 @@ use Brumann\Polyfill\Unserialize;
 
 class UnserializeTest extends \PHPUnit_Framework_TestCase
 {
-    public function test_unserialize_without_options_returns_instance()
+    public function provideInstances()
     {
-        $foo = new Foo();
-        $serialized = serialize($foo);
+        return array(
+            'Empty class' => array(new Foo(), 'Tests\\Brumann\\Polyfill\\Foo'),
+            'Class with uninitialized properties' => array(new Bar(), 'Tests\\Brumann\\Polyfill\\Bar'),
+            'Class with object properties' => array(new FooBar(), 'Tests\\Brumann\\Polyfill\\FooBar'),
+        );
+    }
+
+    /**
+     * @dataProvider provideInstances
+     */
+    public function test_without_options_returns_object($object, $expectedUnserialized)
+    {
+        $serialized = serialize($object);
 
         $unserialized = Unserialize::unserialize($serialized);
 
-        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
+        $this->assertInstanceOf($expectedUnserialized, $unserialized);
     }
 
-    public function test_unserialize_with_fcqn_returns_instance()
+    /**
+     * @dataProvider provideInstances
+     */
+    public function test_with_class_allowed_returns_object($object, $expectedUnserialized)
     {
-        $foo = new Foo();
-        $serialized = serialize($foo);
+        $serialized = serialize($object);
         $options = array(
-            'allowed_classes' => array('Tests\\Brumann\\Polyfill\\Foo'),
+            'allowed_classes' => array($expectedUnserialized),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
+        $this->assertInstanceOf($expectedUnserialized, $unserialized);
     }
 
-    public function test_unserialize_with_prefixed_fcqn_returns_incomplete_object()
+    /**
+     * @dataProvider provideInstances
+     */
+    public function test_with_false_returns_incomplete_class($object, $originalClass)
     {
-        $foo = new Foo();
-        $serialized = serialize($foo);
+        $serialized = serialize($object);
         $options = array(
-            'allowed_classes' => array('\\Tests\\Brumann\\Polyfill\\Foo'),
+            'allowed_classes' => false,
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
+        $this->assertNotInstanceOf($originalClass, $unserialized);
     }
 
-    public function test_unserialize_with_allowed_classes_false_returns_incomplete_object()
+    public function test_with_prefixed_class_names_returns_incomplete_class()
     {
         $foo = new Foo();
         $serialized = serialize($foo);
         $options = array(
-            'allowed_classes' => false,
+            'allowed_classes' => array('\\Tests\\Brumann\\Polyfill\\Foo'),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
@@ -61,7 +77,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
      * @expectedException \PHPUnit_Framework_Error_Warning
      * @expectedMessage allowed_classes option should be array or boolean
      */
-    public function test_unserialize_with_allowed_classes_null_behaves_like_php71()
+    public function test_with_invalid_type_raises_error()
     {
         $foo = new Foo();
         $serialized = serialize($foo);
@@ -73,10 +89,28 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
+     * @requires PHP < 7.0
+     *
+     * @expectedException \PHPUnit_Framework_Error_Warning
+     */
+    public function test_with_invalid_type_returns_incomplete_class()
+    {
+        $foo = new Foo();
+        $serialized = serialize($foo);
+        $options = array(
+            'allowed_classes' => null,
+        );
+
+        $unserialized = Unserialize::unserialize($serialized, $options);
+
+        $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
+    }
+
+    /**
      * @expectedException \PHPUnit_Framework_Error_Notice
      * @expectedExceptionMessage tried to execute a method or access a property of an incomplete object.
      */
-    public function test_accessing_property_of_incomplete_object_returns_warning()
+    public function test_with_parent_not_allowed_serialized_class_is_not_accessible()
     {
         $bar = new \stdClass();
         $bar->foo = new Foo();
@@ -91,7 +125,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $unserialized->foo;
     }
 
-    public function test_unserialize_only_parent_object()
+    public function test_with_only_parent_allowed_property_is_not_accessible()
     {
         $foo = new Foo();
         $foo->bar = new \stdClass();
@@ -106,7 +140,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized->bar);
     }
 
-    public function test_unserialize_parent_and_embedded_object()
+    public function test_parent_containing_same_class_both_are_returned_as_objects()
     {
         $foo = new Foo();
         $foo->foo = new Foo();
@@ -121,49 +155,52 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized->foo);
     }
 
-    public function test_unserialize_with_allowed_classes_false_serializes_string()
+    public function test_private_property_class_returns_objects()
     {
-        $string = 'This is an ordinary string';
-        $serialized = serialize($string);
+        $foobar = new FooBar();
+        $serialized = serialize($foobar);
         $options = array(
-            'allowed_classes' => false,
+            'allowed_classes' => array('Tests\\Brumann\\Polyfill\\FooBar', 'Tests\\Brumann\\Polyfill\\Foo'),
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertEquals($string, $unserialized);
+        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\FooBar', $unserialized);
+        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized->getFoo());
+        $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized->bar);
     }
 
-    public function test_unserialize_with_allowed_classes_false_serializes_bool()
+    public function provideInternalTypes()
     {
-        $bool = true;
-        $serialized = serialize($bool);
-        $options = array(
-            'allowed_classes' => false,
+        return array(
+            'string' => array('This is an ordinary string'),
+            'int' => array(123),
+            'bool' => array(true),
+            'array' => array(
+                array(
+                    'key' => 42,
+                    1 => 'foo',
+                    'bar' => 'baz',
+                    2 => 23,
+                    4 => true,
+                ),
+            ),
         );
-
-        $unserialized = Unserialize::unserialize($serialized, $options);
-
-        $this->assertEquals($bool, $unserialized);
     }
 
-    public function test_unserialize_with_allowed_classes_false_serializes_array()
+    /**
+     * @dataProvider provideInternalTypes
+     */
+    public function test_with_false_returns_internal_types($internalType)
     {
-        $array = array(
-            'key' => 42,
-            1 => 'foo',
-            'bar' => 'baz',
-            2 => 23,
-            4 => true,
-        );
-        $serialized = serialize($array);
+        $serialized = serialize($internalType);
         $options = array(
             'allowed_classes' => false,
         );
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertSame($array, $unserialized);
+        $this->assertSame($internalType, $unserialized);
     }
 
     public function test_double_serialized_unserializes_as_first_serialized()
