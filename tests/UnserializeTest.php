@@ -16,7 +16,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
     }
 
-    public function test_unserialize_with_cqn_returns_instance()
+    public function test_unserialize_with_fcqn_returns_instance()
     {
         $foo = new Foo();
         $serialized = serialize($foo);
@@ -29,7 +29,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
     }
 
-    public function test_unserialize_with_fqcn_allowed_returns_instance()
+    public function test_unserialize_with_prefixed_fcqn_returns_incomplete_object()
     {
         $foo = new Foo();
         $serialized = serialize($foo);
@@ -102,7 +102,7 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertInstanceOf('\\Tests\\Brumann\\Polyfill\\Foo', $unserialized);
+        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized->bar);
     }
 
@@ -117,8 +117,8 @@ class UnserializeTest extends \PHPUnit_Framework_TestCase
 
         $unserialized = Unserialize::unserialize($serialized, $options);
 
-        $this->assertInstanceOf('\\Tests\\Brumann\\Polyfill\\Foo', $unserialized);
-        $this->assertInstanceOf('\\Tests\\Brumann\\Polyfill\\Foo', $unserialized->foo);
+        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized);
+        $this->assertInstanceOf('Tests\\Brumann\\Polyfill\\Foo', $unserialized->foo);
     }
 
     public function test_unserialize_with_allowed_classes_false_serializes_string()
