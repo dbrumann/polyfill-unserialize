@@ -53,6 +53,12 @@ implementing system as possible.
 Please read the [PHPUnit Manual](https://phpunit.de/manual/current/en/installation.html)
 for information how to install it on your system.
 
+Please make sure to pick a compatible version. If you use PHP 5.6 you should
+use PHPUnit 5.7.27 and for older PHP versions you should use PHPUnit 4.8.36.
+Older versions of PHPUnit might not support namespaces, meaning they will not
+work with the tests. Newer versions only support PHP 7.0+, where this library
+is not needed anymore. 
+
 You can run the test suite as follows:
 
 ```bash
