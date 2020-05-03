@@ -3,8 +3,9 @@
 namespace Tests\Brumann\Polyfill;
 
 use Brumann\Polyfill\Unserialize;
+use PHPUnit\Framework\TestCase;
 
-class UnserializeTest extends \PHPUnit_Framework_TestCase
+class UnserializeTest extends TestCase
 {
     public function provideInstances()
     {
