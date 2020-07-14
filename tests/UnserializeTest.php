@@ -231,4 +231,21 @@ class UnserializeTest extends TestCase
 
         $this->assertInstanceOf('__PHP_Incomplete_Class', $unserialized);
     }
+
+    public function test_unserialize_string_with_serialized_object()
+    {
+        $inner = new \stdClass();
+        $outer = new \stdClass();
+        $inner->value = serialize('inner');
+        $outer->value = serialize(array('item', $inner));
+
+        $serialized = serialize($outer);
+        $options = array(
+            'allowed_classes' => false,
+        );
+
+        $unserialized = Unserialize::unserialize($serialized, $options);
+
+        $this->assertEquals($outer,$unserialized);
+    }
 }
