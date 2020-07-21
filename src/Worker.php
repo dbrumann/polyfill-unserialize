@@ -26,7 +26,7 @@ final class Worker
      *
      * @var array[]
      */
-    private $ignoreItems = [];
+    private $ignoreItems = array();
 
     /**
      * @param string $serialized
@@ -65,7 +65,7 @@ final class Worker
                 continue;
             }
 
-            $this->ignoreItems[] = [$start, $end];
+            $this->ignoreItems[] = array($start, $end);
         }
     }
 
