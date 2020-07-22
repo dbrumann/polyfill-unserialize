@@ -255,7 +255,6 @@ class UnserializeTest extends TestCase
     {
         $string = 'A serialized object might look like `...;O:9:"ClassName":0:{};...` - watch out!';
         $serialized = serialize($string);
-        var_dump($serialized);
 
         $options = array('allowed_classes' => false);
         $unserialized = Unserialize::unserialize($serialized, $options);

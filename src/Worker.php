@@ -55,8 +55,8 @@ final class Worker
     {
         $offset = 0;
         while (preg_match(self::PATTERN_STRING, $this->serialized, $matches, PREG_OFFSET_CAPTURE, $offset)) {
-            $length = (int)$matches[1][0];
-            $start = $matches[2][1];
+            $length = (int)$matches[1][0]; // given length in serialized data (e.g. `s:123:"` --> 123)
+            $start = $matches[2][1]; // offset position of quote character
             $end = $start + $length + 1;
             $offset = $end + 1;
 
