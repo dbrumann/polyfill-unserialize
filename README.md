@@ -73,3 +73,64 @@ it unless there are security issues.
 
 Should you find any bugs or have questions, feel free to submit an Issue or a
 Pull Request on GitHub.
+
+Development setup
+-----------------
+
+This library contains a docker setup for development purposes. This allows
+running the code on an older PHP version without having to install it locally.
+
+You can use the setup as follows:
+
+1. Go into the project directory
+
+1. Build the docker image
+
+    ```
+    docker build -t polyfill-unserialize .
+    ```
+
+    This will download a debian/jessie container with PHP 5.6 installed. Then
+    it will download an appropriate version of phpunit for this PHP version.
+    It will also download composer. It will set the working directory to `/opt/app`.
+    The resulting image is tagged as `polyfill-unserialize`, which is the name
+    we will refer to, when running the container. 
+
+1. You can then run a container based on the image, which will run your tests
+
+    ```
+    docker run -it --rm --name polyfill-unserialize-dev -v "$PWD":/opt/app polyfill-unserialize
+    ```
+
+    This will run a docker container based on our previously built image.
+    The container will automatically be removed after phpunit finishes.
+    We name the image `polyfill-unserialize-dev`. This makes sure only one
+    instance is running and that we can easily identify a running container by
+    its name, e.g. in order to remove it manually.
+    We mount our current directory into the container's working directory.
+    This ensures that tests run on our current project's state.
+
+You can repeat the final step as often as you like in order to run the tests.
+The output should look something like this:
+
+```bash
+dbr:polyfill-unserialize/ (improvement/dev_setup*) $ docker run -it --rm --name polyfill-unserialize-dev -v "$PWD":/opt/app polyfill-unserialize
+Loading composer repositories with package information
+Installing dependencies (including require-dev) from lock file
+Nothing to install or update
+Generating autoload files
+PHPUnit 5.7.27 by Sebastian Bergmann and contributors.
+
+......................                                            22 / 22 (100%)
+
+Time: 167 ms, Memory: 13.25MB
+
+OK (22 tests, 31 assertions)
+```
+
+When you are done working on the project you can free up disk space by removing
+the initially built image:
+
+```
+docker image rm polyfill-unserialize
+```
