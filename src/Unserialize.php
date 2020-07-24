@@ -32,7 +32,8 @@ final class Unserialize
             );
         }
 
-        $worker = new Worker($serialized, $allowedClasses);
-        return \unserialize($worker->get());
+        $worker = new DisallowedClassesSubstitutor($serialized, $allowedClasses);
+
+        return \unserialize($worker->getSubstitutedSerialized());
     }
 }
