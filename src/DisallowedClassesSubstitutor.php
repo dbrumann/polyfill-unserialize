@@ -4,8 +4,10 @@ namespace Brumann\Polyfill;
 /**
  * Worker implementation for identifying and skipping false-positives
  * not to be substituted - like nested serializations in string literals.
+ *
+ * @internal This class should only be used by \Brumann\Polyfill\Unserialize
  */
-final class Worker
+final class DisallowedClassesSubstitutor
 {
     const PATTERN_STRING = '#s:(\d+):(")#';
     const PATTERN_OBJECT = '#(^|;)O:\d+:"([^"]*)":(\d+):\{#';
@@ -36,6 +38,7 @@ final class Worker
     {
         $this->serialized = $serialized;
         $this->allowedClasses = $allowedClasses;
+
         $this->buildIgnoreItems();
         $this->substituteObjects();
     }
@@ -43,7 +46,7 @@ final class Worker
     /**
      * @return string
      */
-    public function get()
+    public function getSubstitutedSerialized()
     {
         return $this->serialized;
     }
@@ -61,7 +64,7 @@ final class Worker
             $offset = $end + 1;
 
             // serialized string nested in outer serialized string
-            if ($this->shallIgnore($start, $end)) {
+            if ($this->ignore($start, $end)) {
                 continue;
             }
 
@@ -90,7 +93,7 @@ final class Worker
                 continue;
             }
             // serialized object nested in outer serialized string
-            if ($this->shallIgnore($start, $end)) {
+            if ($this->ignore($start, $end)) {
                 continue;
             }
 
@@ -99,7 +102,7 @@ final class Worker
             $offset = $start + $incompleteItemLength + 1;
 
             $this->replace($incompleteItem, $start, $end);
-            $this->shiftIgnoreItems($end, $incompleteItemLength - $completeLength);
+            $this->shift($end, $incompleteItemLength - $completeLength);
         }
     }
 
@@ -110,26 +113,27 @@ final class Worker
      * @param int $start Start offset in serialized data
      * @param int $end End offset in serialized data
      */
-    protected function replace($replacement, $start, $end)
+    private function replace($replacement, $start, $end)
     {
         $this->serialized = substr($this->serialized, 0, $start)
             . $replacement . substr($this->serialized, $end);
     }
 
     /**
-     * Whether given offset positions shall be ignored.
+     * Whether given offset positions should be ignored.
      *
      * @param int $start
      * @param int $end
      * @return bool
      */
-    private function shallIgnore($start, $end)
+    private function ignore($start, $end)
     {
         foreach ($this->ignoreItems as $ignoreItem) {
             if ($ignoreItem[0] <= $start && $ignoreItem[1] >= $end) {
                 return true;
             }
         }
+
         return false;
     }
 
@@ -141,7 +145,7 @@ final class Worker
      * @param int $offset
      * @param int $size
      */
-    private function shiftIgnoreItems($offset, $size)
+    private function shift($offset, $size)
     {
         foreach ($this->ignoreItems as &$ignoreItem) {
             // only focus on items starting after given offset

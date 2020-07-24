@@ -31,8 +31,25 @@ Installation
 You can install this package via composer:
 
 ```bash
-composer require brumann/polyfill-unserialize "^1.0"
+composer require brumann/polyfill-unserialize "^2.0"
 ```
+
+Older versions
+--------------
+
+You can find the most recent 1.x versions in the branch with the same name:
+
+ * [dbrumann/polyfill-unserialize/tree/1.x](https://github.com/dbrumann/polyfill-unserialize/tree/1.x)
+
+Upgrading
+---------
+
+Upgrading from 1.x to 2.0 should be seamless and require no changes to code
+using the library. There are no changes to the public API, i.e. the names for
+classes, methods and arguments as well as argument order and types remain the
+same. Version 2.x uses a completely different approach for substituting
+disallowed classes, which is why we chose to use a new major release to prevent
+issues from unknown side effects in existing installations.
 
 Known Issues
 ------------
